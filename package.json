@@ -1,0 +1,29 @@
+{
+  "name": "rescue-parachute",
+  "version": "0.0.0",
+  "description": "Opiniorated graceful exit manager",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fcanela/rescue-parachute.git"
+  },
+  "keywords": [
+    "graceful",
+    "exit"
+  ],
+  "author": "Francisco Canela (fcanela)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fcanela/rescue-parachute/issues"
+  },
+  "homepage": "https://github.com/fcanela/rescue-parachute#readme",
+  "dependencies": {
+    "chorizo": "^0.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.11.0"
+  }
+}
