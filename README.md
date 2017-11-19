@@ -57,7 +57,7 @@ bernard.addTask({
 });
 ```
 
-More examples available in `doc` directory.
+More examples available in `docs` directory.
 
 ## <a name="contributing"></a> Contributing and help
 
