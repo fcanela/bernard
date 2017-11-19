@@ -98,8 +98,8 @@ I borrowed it from Landis Blair blog, which had copyleft license.
 [npmsemver-url]: https://github.com/fcanela/bernard
 [ci-image]: https://travis-ci.org/fcanela/bernard.svg?branch=master
 [ci-url]: https://travis-ci.org/fcanela/bernard
-[cq-image]: https://codeclimate.com/github/fcanela/bernard/badges/gpa.svg
-[cq-url]: https://codeclimate.com/github/fcanela/bernard
+[cq-image]: https://api.codeclimate.com/v1/badges/9961fff740438ec1599b/maintainability
+[cq-url]: https://codeclimate.com/github/fcanela/bernard/maintainability
 [deps-image]: https://david-dm.org/fcanela/bernard.svg
 [deps-url]: https://david-dm.org/fcanela/bernard
 [dev-deps-image]: https://david-dm.org/fcanela/bernard/dev-status.svg
