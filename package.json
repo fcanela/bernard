@@ -1,14 +1,15 @@
 {
-  "name": "rescue-parachute",
+  "name": "bernard",
   "version": "0.0.0",
-  "description": "Opiniorated graceful exit manager",
+  "description": "Graceful exit manager ",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive test/test.js",
+    "lint": "eslint src/* test/*"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fcanela/rescue-parachute.git"
+    "url": "git+https://github.com/fcanela/bernard.git"
   },
   "keywords": [
     "graceful",
@@ -17,13 +18,15 @@
   "author": "Francisco Canela (fcanela)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fcanela/rescue-parachute/issues"
+    "url": "https://github.com/fcanela/bernard/issues"
   },
-  "homepage": "https://github.com/fcanela/rescue-parachute#readme",
+  "homepage": "https://github.com/fcanela/bernard#readme",
   "dependencies": {
     "chorizo": "^0.2.1"
   },
   "devDependencies": {
-    "eslint": "^4.11.0"
+    "chai": "^4.1.2",
+    "eslint": "^4.11.0",
+    "mocha": "^4.0.1"
   }
 }

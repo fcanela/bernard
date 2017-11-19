@@ -6,16 +6,16 @@
 const chorizo = require('chorizo');
 const logger = chorizo.for('graceful-exit');
 
-module.exports = class GracefulExitManager {
+module.exports = class Bernard {
   /**
-   * Create a graceful exit manager
+   * Create a instance of Bernard, the graceful exit manager
    *
    * @param {object} options Contains the manager options
-   * @param {number} options.timeout Time to wait (in secons) before forcing
+   * @param {number} options.timeout Time to wait (in milliseconds) before forcing
    * the exit
    */
   constructor(options={}) {
-    this._timeout = options.timeout || 20;
+    this._timeout = options.timeout || 20*1000;
 
     this._isExiting = false;
     this._tasks = [];
@@ -55,15 +55,13 @@ module.exports = class GracefulExitManager {
    * Some task could fail or take too long.
    */
   _startTimeoutCountdown() {
-    const timeoutInMs = this._timeout * 1000;
-
     setTimeout(() => {
       // NOTE: This is not POSIX compliant. If a signal caused the
       // close process, it should return 128 + signal number
       logger.warn('Unable to exit gracefully. Forcing the exit');
       process.exitCode = 1;
       process.exit();
-    }, timeoutInMs);
+    }, this._timeout);
   }
 
   /**
@@ -76,7 +74,8 @@ module.exports = class GracefulExitManager {
     if (this._isExiting) return;
     this._isExiting = true;
 
-    const message = `Finishing application execution. Waiting ${this._timeout} seconds for graceful exit`;
+    const timeoutInSecs = (this._timeout/1000).toFixed(2);
+    const message = `Finishing application execution. Waiting ${timeoutInSecs} seconds for graceful exit`;
     logger.warn(message);
 
     this._startTimeoutCountdown();
@@ -84,14 +83,13 @@ module.exports = class GracefulExitManager {
 
     // Close tasks finished. Application still running because the timeout check
     // is in the event loop
-    process.exitCode = 0;
     process.exit();
   }
 
   /**
    * Attach graceful exit handler to exit events
    */
-  configure() {
+  prepare() {
     // Configure logger.fatal option to invoke graceful exit
     require('chorizo').once('fatal', () => {
       logger.info('Proceding to graceful exit after fatal error');
@@ -107,11 +105,13 @@ module.exports = class GracefulExitManager {
     process.on('unhandledRejection', function(reason){
       logger.fatal('Unhandled Promise Rejection. Reason: ' + reason);
       logger.info('Proceding to graceful exit after an unhandled promise');
+      process.exitCode = 1;
       process.kill(process.pid, 'SIGTERM');
     });
     process.on('uncaughtException', function(err) {
       logger.fatal('Uncaught Exception', err);
       logger.info('Proceding to graceful exit after an uncaught exception');
+      process.exitCode = 1;
       process.kill(process.pid, 'SIGTERM');
     });
   }
