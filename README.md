@@ -89,6 +89,10 @@ Also, Bernard is tailor made to work with `chorizo`, an opiniorated logger that 
 
 Yes, Robert C. Martin would slap me with a large trout for this. The number of things that I could do better in each code line I write haunts me daily. Unfortunately I have limited time resources. Feel free to open a pull request if you see something that could be better.
 
+### Who draw the Saint Bernard?
+
+I borrowed it from Landis Blair blog, which had copyleft license.
+
 
 [npmsemver-image]: https://img.shields.io/badge/version-0.0.0-orange.svg
 [npmsemver-url]: https://github.com/fcanela/bernard
