@@ -1,12 +1,15 @@
-# rescue-parachute
+# bernard
 
 [![npm version][npmsemver-image]][npmsemver-url]
+[![Build Status][ci-image]][ci-url]
 [![Code Climate][cq-image]][cq-url]
 [![Dependencies][deps-image]][deps-url]
 [![Dev Dependencies][dev-deps-image]][dev-deps-url]
 [![License][license-image]][license-url]
 
-> rescue-parachute is a graceful exit manager. It is coupled with chorizo logger for my teams ease of use, it may not suit you.
+> `bernard` is a Node.js graceful exit manager intended to work with `chorizo` logger.
+
+<img src="/docs/logo.jpg" alt="bernard graceful exit manager for javascript"/>
 
 ## Table of Contents
 
@@ -30,26 +33,45 @@ Rescue-parachute helps to stop the execution in an ordered manner. For example, 
 ## <a name="installing"></a> Installing
 
 ```
-npm install --save rescue-parachute
+npm install --save bernard
 ```
 
 ## <a name="usage"></a> Usage
 
-See `example.js`.
+Here you have a illustrative example on how to use it with Express:
+
+```js
+const express = require('express');
+const app = express();
+const server = app.listen(9000);
+
+const Bernard = require('bernard');
+const bernard = new Bernard();
+bernard.prepare();
+
+bernard.addTask({
+    title: 'Express Server',
+    handler: function() {
+        return server.close();
+    }
+});
+```
+
+More examples available in `docs` directory.
 
 ## <a name="contributing"></a> Contributing and help
 
 ### <a name="criticism"></a> Criticism
-If you think something could be done better or simply sucks, bring up a issue on the [tracker](https://github.com/fcanela/rescue-parachute/issues). Don't be shy. I really love feedback and technical discussions.
+If you think something could be done better or simply sucks, bring up a issue on the [tracker](https://github.com/fcanela/bernard/issues). Don't be shy. I really love feedback and technical discussions.
 
 ### <a name="developing"></a> Developing
-Pull requests are welcome (and will make me cry in joy). I would love it to have tests and make `chorizo` use optional.
+Pull requests are welcome (and will make me cry in joy). I would love it to have more tests and make `chorizo` use optional.
 
-Did I already say that I **love** technical discussions? Feel free to open a issue on the [tracker](https://github.com/fcanela/rescue-parachute/issues) if you have any doubt.
+Did I already say that I **love** technical discussions? Feel free to open a issue on the [tracker](https://github.com/fcanela/bernard/issues) if you have any doubt.
 
 ### <a name="bugs"></a> Bug reports, feature requests and discussion
 
-Use the [GitHub issue tracker](https://github.com/fcanela/rescue-parachute/issues) to report any bugs or file feature requests. In case you found a bug and have no GitHub account, feel free to email me: fcanela.dev at gmail dot com.
+Use the [GitHub issue tracker](https://github.com/fcanela/bernard/issues) to report any bugs or file feature requests. In case you found a bug and have no GitHub account, feel free to email me: fcanela.dev at gmail dot com.
 
 ## <a name="license"></a> License
 
@@ -59,20 +81,28 @@ Copyright (c) 2017 Francisco Canela. Licensed under the MIT license.
 
 ### Should I use it in my project?
 
-Probably not. This is tailor made for a project and suitable for breaking changes. I may find a better option and stop maintanig it. Also, the is coupled with "chorizo" logger library.
+Probably not. At least, not yet. I usually follow __semver__ for modules versioning and while it is at 0.x.x you can expect breaking changes.
 
-### Why the hell did you coupled those things? And no tests?
+Also, Bernard is tailor made to work with `chorizo`, an opiniorated logger that we use in several projects. It may not suit your needs.
 
-Yes, Robert C. Martin would slap me with a large trout for this.
+### Why the hell did you coupled those things? And no test for X case?
+
+Yes, Robert C. Martin would slap me with a large trout for this. The number of things that I could do better in each code line I write haunts me daily. Unfortunately I have limited time resources. Feel free to open a pull request if you see something that could be better.
+
+### Who draw the Saint Bernard?
+
+I borrowed it from Landis Blair blog, which had copyleft license.
 
 
 [npmsemver-image]: https://img.shields.io/badge/version-0.0.0-orange.svg
-[npmsemver-url]: https://github.com/fcanela/rescue-parachute
-[cq-image]: https://codeclimate.com/github/fcanela/rescue-parachute/badges/gpa.svg
-[cq-url]: https://codeclimate.com/github/fcanela/rescue-parachute
-[deps-image]: https://david-dm.org/fcanela/rescue-parachute.svg
-[deps-url]: https://david-dm.org/fcanela/rescue-parachute
-[dev-deps-image]: https://david-dm.org/fcanela/rescue-parachute/dev-status.svg
-[dev-deps-url]: https://david-dm.org/fcanela/rescue-parachute#info=devDependencies
+[npmsemver-url]: https://github.com/fcanela/bernard
+[ci-image]: https://travis-ci.org/fcanela/bernard.svg?branch=master
+[ci-url]: https://travis-ci.org/fcanela/bernard
+[cq-image]: https://api.codeclimate.com/v1/badges/9961fff740438ec1599b/maintainability
+[cq-url]: https://codeclimate.com/github/fcanela/bernard/maintainability
+[deps-image]: https://david-dm.org/fcanela/bernard.svg
+[deps-url]: https://david-dm.org/fcanela/bernard
+[dev-deps-image]: https://david-dm.org/fcanela/bernard/dev-status.svg
+[dev-deps-url]: https://david-dm.org/fcanela/bernard#info=devDependencies
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
 [license-url]: LICENSE
