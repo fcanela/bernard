@@ -3,18 +3,20 @@
 /**
  * Module dependencies
  */
-const chorizo = require('chorizo');
-const logger = chorizo.for('graceful-exit');
+const EventEmitter = require('events').EventEmitter;
 
-module.exports = class Bernard {
+module.exports = class Bernard extends EventEmitter {
   /**
-   * Create a instance of Bernard, the graceful exit manager
+   * Create a instance of bernard
    *
    * @param {object} options Contains the manager options
    * @param {number} options.timeout Time to wait (in milliseconds) before forcing
    * the exit
    */
   constructor(options={}) {
+    // Call  EventEmitter constructor
+    super();
+
     this._timeout = options.timeout || 20*1000;
 
     this._isExiting = false;
@@ -46,7 +48,7 @@ module.exports = class Bernard {
    */
   async _runTasks() {
     for (let task of this._tasks) {
-      logger.info(`Running closing task "${task.title}"`);
+      this.emit('taskStart', task.title);
       await task.handler();
     }
   }
@@ -56,9 +58,10 @@ module.exports = class Bernard {
    */
   _startTimeoutCountdown() {
     setTimeout(() => {
+      this.emit('timeout');
+
       // NOTE: This is not POSIX compliant. If a signal caused the
       // close process, it should return 128 + signal number
-      logger.warn('Unable to exit gracefully. Forcing the exit');
       process.exitCode = 1;
       process.exit();
     }, this._timeout);
@@ -74,9 +77,7 @@ module.exports = class Bernard {
     if (this._isExiting) return;
     this._isExiting = true;
 
-    const timeoutInSecs = (this._timeout/1000).toFixed(2);
-    const message = `Finishing application execution. Waiting ${timeoutInSecs} seconds for graceful exit`;
-    logger.warn(message);
+    this.emit('shutdown', { timeout: this._timeout });
 
     this._startTimeoutCountdown();
     await this._runTasks();
@@ -90,27 +91,20 @@ module.exports = class Bernard {
    * Attach graceful exit handler to exit events
    */
   prepare() {
-    // Configure logger.fatal option to invoke graceful exit
-    require('chorizo').once('fatal', () => {
-      logger.info('Proceding to graceful exit after fatal error');
-      this._shutdown();
-    });
-
     // Configure process signals to invoke graceful exit
     ['SIGTERM', 'SIGINT', 'SIGHUP'].forEach((signal) => {
+      this.emit('signal', signal);
       process.on(signal, this._shutdown.bind(this));
     });
 
     // React to unhandled errors with graceful exit
-    process.on('unhandledRejection', function(reason){
-      logger.fatal('Unhandled Promise Rejection. Reason: ' + reason);
-      logger.info('Proceding to graceful exit after an unhandled promise');
+    process.on('unhandledRejection', function(error){
+      this.emit('unhandledRejection', error);
       process.exitCode = 1;
       process.kill(process.pid, 'SIGTERM');
     });
-    process.on('uncaughtException', function(err) {
-      logger.fatal('Uncaught Exception', err);
-      logger.info('Proceding to graceful exit after an uncaught exception');
+    process.on('uncaughtException', function(error) {
+      this.emit('uncaughtException', error);
       process.exitCode = 1;
       process.kill(process.pid, 'SIGTERM');
     });
