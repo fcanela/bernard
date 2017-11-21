@@ -98,12 +98,12 @@ module.exports = class Bernard extends EventEmitter {
     });
 
     // React to unhandled errors with graceful exit
-    process.on('unhandledRejection', function(error){
+    process.on('unhandledRejection', (error) => {
       this.emit('unhandledRejection', error);
       process.exitCode = 1;
       process.kill(process.pid, 'SIGTERM');
     });
-    process.on('uncaughtException', function(error) {
+    process.on('uncaughtException', (error) => {
       this.emit('uncaughtException', error);
       process.exitCode = 1;
       process.kill(process.pid, 'SIGTERM');
