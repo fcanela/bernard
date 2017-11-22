@@ -1,6 +1,6 @@
 {
   "name": "bernard",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Graceful exit manager ",
   "main": "src/index.js",
   "scripts": {
