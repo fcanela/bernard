@@ -1,6 +1,6 @@
 {
   "name": "bernard",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Graceful exit manager ",
   "main": "src/index.js",
   "scripts": {
@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/fcanela/bernard#readme",
   "dependencies": {
-    "chorizo": "^0.2.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",

@@ -7,7 +7,7 @@
 [![Dev Dependencies][dev-deps-image]][dev-deps-url]
 [![License][license-image]][license-url]
 
-> `bernard` is a Node.js graceful exit manager intended to work with `chorizo` logger.
+> `bernard` is a Node.js graceful exit manager
 
 <img src="/docs/logo.jpg" alt="bernard graceful exit manager for javascript"/>
 
@@ -65,9 +65,7 @@ More examples available in `docs/examples` directory.
 If you think something could be done better or simply sucks, bring up a issue on the [tracker](https://github.com/fcanela/bernard/issues). Don't be shy. I really love feedback and technical discussions.
 
 ### <a name="developing"></a> Developing
-Pull requests are welcome (and will make me cry in joy). I would love it to have more tests and make `chorizo` use optional.
-
-Did I already say that I **love** technical discussions? Feel free to open a issue on the [tracker](https://github.com/fcanela/bernard/issues) if you have any doubt.
+Pull requests are welcome (and will make me cry in joy). Also, did I already say that I **love** technical discussions? Feel free to open a issue on the [tracker](https://github.com/fcanela/bernard/issues) if you have any doubt.
 
 ### <a name="bugs"></a> Bug reports, feature requests and discussion
 
@@ -83,18 +81,16 @@ Copyright (c) 2017 Francisco Canela. Licensed under the MIT license.
 
 Probably not. At least, not yet. I usually follow __semver__ for modules versioning and while it is at 0.x.x you can expect breaking changes.
 
-Also, Bernard is tailor made to work with `chorizo`, an opiniorated logger that we use in several projects. It may not suit your needs.
+### This project documentation sucks
 
-### Why the hell did you coupled those things? And no test for X case?
-
-Yes, Robert C. Martin would slap me with a large trout for this. The number of things that I could do better in each code line I write haunts me daily. Unfortunately I have limited time resources. Feel free to open a pull request if you see something that could be better.
+Yes, I know. Unfortunately I have limited time resources. Feel free to open a issue or sumbit a pull request if you can help me improving this.
 
 ### Who draw the Saint Bernard?
 
 I borrowed it from Landis Blair blog, which had copyleft license.
 
 
-[npmsemver-image]: https://img.shields.io/badge/version-0.0.0-orange.svg
+[npmsemver-image]: https://img.shields.io/badge/version-0.0.1-orange.svg
 [npmsemver-url]: https://github.com/fcanela/bernard
 [ci-image]: https://circleci.com/gh/fcanela/bernard.svg?style=svg
 [ci-url]: https://circleci.com/gh/fcanela/bernard
