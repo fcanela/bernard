@@ -93,21 +93,19 @@ module.exports = class Bernard extends EventEmitter {
   prepare() {
     // Configure process signals to invoke graceful exit
     ['SIGTERM', 'SIGINT', 'SIGHUP'].forEach((signal) => {
-      this.emit('signal', signal);
-      process.on(signal, this._shutdown.bind(this));
+      process.on(signal, () =>  {
+        this.emit('signal', signal);
+        this._shutdown();
+      });
     });
 
     // React to unhandled errors with graceful exit
-    process.on('unhandledRejection', (error) => {
-      this.emit('unhandledRejection', error);
-      process.exitCode = 1;
-      process.kill(process.pid, 'SIGTERM');
-    });
-    process.on('uncaughtException', (error) => {
-      this.emit('uncaughtException', error);
-      process.exitCode = 1;
-      process.kill(process.pid, 'SIGTERM');
+    ['unhandledRejection', 'uncaughtException'].forEach((errorCause) => {
+      process.on(errorCause, (error) => {
+        this.emit(errorCause, error);
+        process.exitCode = 1;
+        process.kill(process.pid, 'SIGTERM');
+      });
     });
   }
 };
-

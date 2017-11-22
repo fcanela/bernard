@@ -60,6 +60,18 @@ const ipcController = new EventEmitter();
 let bernard;
 ipcController.on('setup', function(config) {
   bernard = new Bernard(config);
+
+  // Notify tests about all events
+  const events = [
+    'taskStart', 'timeout', 'shutdown', 'signal', 'unhandledRejection',
+    'uncaughtException'
+  ];
+  events.forEach(function(event) {
+    bernard.on(event, function(value) {
+      process.send({ event, value });
+    });
+  });
+
   bernard.prepare();
 });
 
@@ -76,13 +88,13 @@ ipcController.on('addTask', function(timeout) {
   bernard.addTask(task);
 });
 
-ipcController.on('provokeUnhandledException', function() {
+ipcController.on('provokeUncaughtException', function() {
   throw new Error('Unhandled exception example');
 });
 
-ipcController.on('provokeUnhandledPromiseError', function() {
+ipcController.on('provokeUnhandledRejection', function() {
   new Promise(() => {
-    throw new Error('Unhandled promise error example');
+    throw new Error('Unhandled rejection error example');
   });
 });
 

@@ -7,7 +7,7 @@ const { spawn } = require('child_process');
 const { join } = require('path');
 const { expect } = require('chai');
 
-describe('The library', () => {
+describe('The library', async () => {
   // After this timeout, the application should force the exit
   const DEFAULT_TIMEOUT = 200;
   // Duration of the graceful exit task
@@ -19,22 +19,8 @@ describe('The library', () => {
   // Child process which simulates the test behaviour
   let subprocess;
 
-  /**
-   * Instance and do basic subprocess configuration to
-   * avoid repeating it in each test
-   */
-  const servicePath = join(__dirname, 'fake_service.js');
-  beforeEach(() => {
-    // Kill it if the test run before failed to exit
-    if (subprocess) subprocess.kill('SIGKILL');
-
-    subprocess = spawn('node', [servicePath], {
-      // Substitute to see output
-      //stdio: [process.stdin, process.stdout, process.stderr, 'ipc']
-      stdio: ['ignore', 'ignore', 'ignore', 'ipc']
-    });
-    send('setup', { timeout: DEFAULT_TIMEOUT });
-  });
+  // Received event messages
+  let messages;
 
   /**
    * Commodity function to construct and format IPC messages
@@ -73,13 +59,13 @@ describe('The library', () => {
   function examineExit(behaviour) {
     return new Promise((resolve) => {
       subprocess.on('exit', exitHandler);
+
       behaviour();
       const hrstart = process.hrtime();
 
       function exitHandler(code, signal) {
         const hrend = process.hrtime(hrstart);
         const differenceInMs = hrend[0]*1e3 + hrend[1]/1e6;
-        subprocess = undefined;
         resolve({
           code, signal,
           duration: differenceInMs
@@ -93,10 +79,27 @@ describe('The library', () => {
    *
    * Yes. This is because I have a serious problem with lengthy lines.
    *
-   * @param {string} signal
+   * @param {string} signal Signal code (i.e. SIGTERM, SIGINT)
    */
   function kill(signal) {
     subprocess.kill(signal);
+  }
+
+  /**
+   * Fails if no event message met the given criteria
+   *
+   * @param {string} eventName Name of the event
+   * @param {*} value Value to match
+   */
+  function expectEvent(eventName, value) {
+    const event = messages.find((msg) => {
+      if (value === undefined) {
+        return msg.event === eventName;
+      }
+      return msg.event === eventName && msg.value === value;
+    });
+
+    expect(event).to.exist;
   }
 
   /**
@@ -113,31 +116,75 @@ describe('The library', () => {
     expect(duration).to.be.within(minTime, maxTime);
   }
 
-  ['SIGTERM', 'SIGHUP', 'SIGINT'].forEach((signal) => {
-    it(`should close gracefully when receive ${signal} signal`, async () => {
-      send('addTask', DEFAULT_TASK_TIME);
-      await waitForStartup();
-      const result = await examineExit(() => kill(signal));
-      expectDurationWithin(result.duration, DEFAULT_TASK_TIME);
-      // Not POSIX compliant
-      expect(result.code).to.equal(0);
+  /**
+   * Instance and do basic subprocess configuration to
+   * avoid repeating it in each test */
+  const servicePath = join(__dirname, 'fake_service.js');
+  beforeEach(() => {
+    // Kill it if the test run before failed to exit
+    if (subprocess) subprocess.kill('SIGKILL');
+
+    subprocess = spawn('node', [servicePath], {
+      // Substitute to see output
+      stdio: [process.stdin, process.stdout, process.stderr, 'ipc']
+      //stdio: ['ignore', 'ignore', 'ignore', 'ipc']
+    });
+
+    messages = [];
+    subprocess.on('message', (message) => messages.push(message));
+
+    send('setup', { timeout: DEFAULT_TIMEOUT });
+  });
+
+  ['SIGTERM', 'SIGINT', 'SIGHUP'].forEach((signal) => {
+    describe(`when receive ${signal} signal`, async () => {
+      it('should close gracefully', async () => {
+        send('addTask', DEFAULT_TASK_TIME);
+        await waitForStartup();
+
+        const result = await examineExit(() => kill(signal));
+        expectDurationWithin(result.duration, DEFAULT_TASK_TIME);
+        // Not POSIX compliant
+        expect(result.code).to.equal(0);
+      });
+
+      it('should emit the related events', async () => {
+        send('addTask', DEFAULT_TASK_TIME);
+        await waitForStartup();
+        await examineExit(() => kill(signal));
+
+        expectEvent('signal', signal);
+        expectEvent('shutdown');
+        expectEvent('taskStart');
+      });
     });
   });
 
-  it('should close gracefully when an unhandled exception occurs', async () => {
-    send('addTask', DEFAULT_TASK_TIME);
-    await waitForStartup();
-    const result = await examineExit(() => send('provokeUnhandledException'));
-    expectDurationWithin(result.duration, DEFAULT_TASK_TIME);
-    expect(result.code).to.equal(1);
-  });
+  ['uncaughtException', 'unhandledRejection'].forEach((errorCause) => {
+    describe(`when an ${errorCause} occurs`, () => {
+      it('should close gracefully', async () => {
+        send('addTask', DEFAULT_TASK_TIME);
+        await waitForStartup();
 
-  it('should close gracefully when an unhandled promise error occurs', async () => {
-    send('addTask', DEFAULT_TASK_TIME);
-    await waitForStartup();
-    const result = await examineExit(() => send('provokeUnhandledPromiseError'));
-    expectDurationWithin(result.duration, DEFAULT_TASK_TIME);
-    expect(result.code).to.equal(1);
+        const capitalizedError = errorCause.charAt(0).toUpperCase() + errorCause.slice(1);
+        const result = await examineExit(() => send(`provoke${capitalizedError}`));
+        expectDurationWithin(result.duration, DEFAULT_TASK_TIME);
+        expect(result.code).to.equal(1);
+      });
+
+      it('should emit the related events', async () => {
+        send('addTask', DEFAULT_TASK_TIME);
+        await waitForStartup();
+
+        const capitalizedError = errorCause.charAt(0).toUpperCase() + errorCause.slice(1);
+        await examineExit(() => send(`provoke${capitalizedError}`));
+
+        expectEvent(errorCause);
+        expectEvent('signal', 'SIGTERM');
+        expectEvent('shutdown');
+        expectEvent('taskStart');
+      });
+    });
   });
 
   it('should force the exit after timeout', async () => {
