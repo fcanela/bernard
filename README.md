@@ -65,9 +65,7 @@ More examples available in `docs/examples` directory.
 If you think something could be done better or simply sucks, bring up a issue on the [tracker](https://github.com/fcanela/bernard/issues). Don't be shy. I really love feedback and technical discussions.
 
 ### <a name="developing"></a> Developing
-Pull requests are welcome (and will make me cry in joy). Specially .
-
-Did I already say that I **love** technical discussions? Feel free to open a issue on the [tracker](https://github.com/fcanela/bernard/issues) if you have any doubt.
+Pull requests are welcome (and will make me cry in joy). Also, did I already say that I **love** technical discussions? Feel free to open a issue on the [tracker](https://github.com/fcanela/bernard/issues) if you have any doubt.
 
 ### <a name="bugs"></a> Bug reports, feature requests and discussion
 
