@@ -9,7 +9,7 @@
 
 > `bernard` is a Node.js graceful exit manager
 
-<img src="/docs/logo.jpg" alt="bernard graceful exit manager for javascript"/>
+<img src="/docs/logo.png" alt="bernard graceful exit manager for javascript"/>
 
 ## Table of Contents
 
@@ -87,7 +87,7 @@ Yes, I know. Unfortunately I have limited time resources. Feel free to open a is
 
 ### Who draw the Saint Bernard?
 
-I borrowed it from Landis Blair blog, which had copyleft license.
+I am unable to draw a circle. Gladly, my girlfriend, Maria Bonete, has more artistical skills. She did it.
 
 
 [npmsemver-image]: https://img.shields.io/badge/version-0.0.1-orange.svg
